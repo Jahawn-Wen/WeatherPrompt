@@ -13,11 +13,11 @@ Extensive experiments validate the effectiveness of WeatherPrompt. On University
 
 
 ## CoT Prompt
-* The **prompt** is coming soon. Welcome to communicate！
+* The **prompt** is coming soon. 
 * description format: [Weather Condition], [building quantity/arrangement], [relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable].
 
 ## Models and Weights
-* The **Models** and **Weights** are coming soon. Welcome to communicate！
+* The **Models** and **Weights** are coming soon. 
 
 ## Usage
 ### Install Requirements
