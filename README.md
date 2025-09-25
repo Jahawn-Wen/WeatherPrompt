@@ -10,3 +10,49 @@ Extensive experiments validate the effectiveness of WeatherPrompt. On University
 
 ## News
 * The **Code** is coming soon. Welcome to communicate！
+
+
+## CoT Prompt
+* The **prompt** is coming soon. Welcome to communicate！
+* description format: [Weather Condition], [building quantity/arrangement], [relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable].
+
+## Models and Weights
+* The **Models** and **Weights** are coming soon. Welcome to communicate！
+
+## Usage
+### Install Requirements
+
+We use single A6000 48G GPU for training and evaluation.
+
+Create conda environment.
+
+```
+conda create -n weatherprompt python=3.9
+conda activate weatherprompt
+pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+pip3 install -r requirements.txt
+```
+
+### Datasets Prepare
+Download [University-1652](https://github.com/layumi/University1652-Baseline) upon request. You may use the request [template](https://github.com/layumi/University1652-Baseline/blob/master/Request.md).
+
+Download [SUES-200](https://github.com/Reza-Zhu/SUES-200-Benchmark).
+
+## Train & Evaluation
+* The **Code** is coming soon.
+
+## Reference
+
+```bibtex
+@inproceedings{wen2025WeatherPrompt,
+  author = "Wen, Jiahao and Yu, Hang and Zheng, Zhedong",
+  title = "WeatherPrompt: Multi-modality Representation Learning for All-Weather Drone Visual Geo-Localization",
+  booktitle = "NeurIPS",
+  year = "2025" }
+```
+
+
+
+
+
+
