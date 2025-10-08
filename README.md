@@ -52,8 +52,8 @@ Organize `dataset` folder as follows:
 |            |-- 150/
 |            |-- 200/
 |            |-- ...
-|    |-- multiweather_captions_test_32B.json
 |    |-- multiweather_captions_32B.json
+|    |-- multiweather_captions_test_32B.json
 |    |-- multiweather_captions_test_32B_gallery.json
 ```
 
