@@ -19,7 +19,9 @@ import yaml
 import math
 from model import ft_net, two_view_net, three_view_net
 from utils import load_network
-from image_folder import customData, customData_one, customData_style
+from image_folder import customData, customData_one, customData_style, ImageFolder_iaa
+import imgaug.augmenters as iaa
+import random
 #fp16
 try:
     from apex.fp16_utils import *
@@ -30,26 +32,35 @@ except ImportError: # will be 3.x series
 # --------
 
 parser = argparse.ArgumentParser(description='Training')
-parser.add_argument('--gpu_ids',default='0', type=str, help='gpu_ids: e.g. 0  0,1,2  0,2')
+parser.add_argument('--gpu_ids',default='0', type=str,help='gpu_ids: e.g. 0  0,1,2  0,2')
 parser.add_argument('--which_epoch',default='last', type=str, help='0,1,2,3...or last')
 parser.add_argument('--test_dir',default='./data/test',type=str, help='./test_data')
-parser.add_argument('--name', default='follow', type=str, help='save model path')
+parser.add_argument('--name', default='three_view_long_share_d0.75_256_s1_google', type=str, help='save model path')
 parser.add_argument('--pool', default='avg', type=str, help='avg|max')
 parser.add_argument('--style', default='none', type=str, help='select image style: e.g. night, nightfall, NightLight, shadow, StrongLight, all')
-parser.add_argument('--batchsize', default=128, type=int, help='batchsize')
+parser.add_argument('--batchsize', default=64, type=int, help='batchsize')
 parser.add_argument('--h', default=256, type=int, help='height')
 parser.add_argument('--w', default=256, type=int, help='width')
 parser.add_argument('--views', default=2, type=int, help='views')
 parser.add_argument('--pad', default=0, type=int, help='padding')
 parser.add_argument('--use_dense', action='store_true', help='use densenet121' )
+parser.add_argument('--use_VIT', action='store_true', help='use VIT' )
 parser.add_argument('--LPN', action='store_true', help='use LPN' )
 parser.add_argument('--multi', action='store_true', help='use multiple query' )
 parser.add_argument('--fp16', action='store_true', help='use fp16.' )
 parser.add_argument('--scale_test', action='store_true', help='scale test' )
+parser.add_argument('--iaa', action='store_true', help='iaa image augmentation' )
 parser.add_argument('--ms',default='1', type=str,help='multiple_scale: e.g. 1 1,1.1  1,1.1,1.2')
 
 opt = parser.parse_args()
 ###load config###
+
+#debug
+# opt.iaa = True
+# opt.name = 'three_view_long_share_d0.75_256_s1_google_lr0.005_spade_v24.5_210ep_weather_1010000_5std'
+# opt.test_dir = '/home/wangtyu/datasets/University-Release/test'
+# opt.batchsize = 4
+
 # load the training config
 config_path = os.path.join('./model',opt.name,'opts.yaml')
 with open(config_path, 'r') as stream:
@@ -71,7 +82,7 @@ if 'nclasses' in config: # tp compatible with old config files
     opt.nclasses = config['nclasses']
 else: 
     opt.nclasses = 729 
-print('gpu-ids-----------------:', opt.gpu_ids)
+
 str_ids = opt.gpu_ids.split(',')
 #which_epoch = opt.which_epoch
 name = opt.name
@@ -123,14 +134,201 @@ if opt.LPN:
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]) 
     ])
+# using iaa image augmentation
+if opt.iaa:
+    iaa_transform = iaa.Sequential(
+        [
+            # rain
+            # iaa.Rain(drop_size=(0.05, 0.1), speed=(0.04, 0.06), seed=38),
+            # iaa.Rain(drop_size=(0.05, 0.1), speed=(0.04, 0.06), seed=35),
+            # iaa.Rain(drop_size=(0.1, 0.2), speed=(0.04, 0.06), seed=73),
+            # iaa.Rain(drop_size=(0.1, 0.2), speed=(0.04, 0.06), seed=93),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=95),
+
+            # fog
+            # iaa.CloudLayer(intensity_mean=225, intensity_freq_exponent=-2, intensity_coarse_scale=2, alpha_min=1.0,
+            #                alpha_multiplier=0.9, alpha_size_px_max=10, alpha_freq_exponent=-2, sparsity=0.9,
+            #                density_multiplier=0.5, seed=35),
+
+            # dark
+            iaa.BlendAlpha(0.5, foreground=iaa.Add(100), background=iaa.Multiply(0.2), seed=31),
+            iaa.MultiplyAndAddToBrightness(mul=0.2, add=(-30, -15), seed=1991),
+
+            # light
+            # iaa.MultiplyAndAddToBrightness(mul=1.6, add=(0, 30), seed=1992),  # guobao
+
+            # snow
+            # iaa.Snowflakes(flake_size=(0.5, 0.8), speed=(0.007, 0.03), seed=38),
+            # iaa.Snowflakes(flake_size=(0.5, 0.8), speed=(0.007, 0.03), seed=35),
+            # iaa.Snowflakes(flake_size=(0.6, 0.9), speed=(0.007, 0.03), seed=74),
+            # iaa.Snowflakes(flake_size=(0.6, 0.9), speed=(0.007, 0.03), seed=94),
+            # iaa.Snowflakes(flake_size=(0.5, 0.9), speed=(0.007, 0.03), seed=96),
+
+            # fog+rain
+            # iaa.CloudLayer(intensity_mean=225, intensity_freq_exponent=-2, intensity_coarse_scale=2, alpha_min=1.0,
+            #                alpha_multiplier=0.9, alpha_size_px_max=10, alpha_freq_exponent=-2, sparsity=0.9,
+            #                density_multiplier=0.5, seed=35),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=35),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=36),
+
+            # fog+snow
+            # iaa.CloudLayer(intensity_mean=225, intensity_freq_exponent=-2, intensity_coarse_scale=2, alpha_min=1.0,
+            #                alpha_multiplier=0.9, alpha_size_px_max=10, alpha_freq_exponent=-2, sparsity=0.9,
+            #                density_multiplier=0.5, seed=35),
+            # iaa.Snowflakes(flake_size=(0.5, 0.9), speed=(0.007, 0.03), seed=35),
+            # iaa.Snowflakes(flake_size=(0.5, 0.9), speed=(0.007, 0.03), seed=36),
+
+            # rain+snow
+            # iaa.Snowflakes(flake_size=(0.5, 0.8), speed=(0.007, 0.03), seed=35),
+            # iaa.Rain(drop_size=(0.05, 0.1), speed=(0.04, 0.06), seed=35),
+            # iaa.Rain(drop_size=(0.1, 0.2), speed=(0.04, 0.06), seed=92),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=91),
+            # iaa.Snowflakes(flake_size=(0.6, 0.9), speed=(0.007, 0.03), seed=74),
+
+            # wind
+            # iaa.MotionBlur(15, seed=17),
+
+            # unseen easy
+            # iaa.CloudLayer(intensity_mean=225, intensity_freq_exponent=-2, intensity_coarse_scale=2, alpha_min=1.0,
+            #                alpha_multiplier=0.9, alpha_size_px_max=10, alpha_freq_exponent=-2, sparsity=0.9,
+            #                density_multiplier=0.5, seed=35),
+            # iaa.Snowflakes(flake_size=(0.5, 0.9), speed=(0.007, 0.03), seed=35),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=35),
+
+            # unseen 
+            # iaa.CloudLayer(intensity_mean=225, intensity_freq_exponent=-2, intensity_coarse_scale=2, alpha_min=1.0,
+            #                alpha_multiplier=0.9, alpha_size_px_max=10, alpha_freq_exponent=-2, sparsity=0.9,
+            #                density_multiplier=0.5, seed=35),
+            # iaa.Snowflakes(flake_size=(0.5, 0.9), speed=(0.007, 0.03), seed=35),
+            # iaa.Snowflakes(flake_size=(0.5, 0.9), speed=(0.007, 0.03), seed=36),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=35),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=36),
+
+            # iaa.CloudLayer(intensity_mean=225, intensity_freq_exponent=-2, intensity_coarse_scale=2, alpha_min=1.0,
+            #                alpha_multiplier=0.9, alpha_size_px_max=10, alpha_freq_exponent=-2, sparsity=0.9,
+            #                density_multiplier=0.5, seed=35),
+            # iaa.Snowflakes(flake_size=(0.5, 0.8), speed=(0.007, 0.03), seed=35),
+            # iaa.Rain(drop_size=(0.05, 0.1), speed=(0.04, 0.06), seed=35),
+            # iaa.Rain(drop_size=(0.1, 0.2), speed=(0.04, 0.06), seed=92),
+            # iaa.Rain(drop_size=(0.05, 0.2), speed=(0.04, 0.06), seed=91),
+            # iaa.Snowflakes(flake_size=(0.6, 0.9), speed=(0.007, 0.03), seed=74),
+
+        #     iaa.Sequential([
+        #      iaa.CloudLayer(
+        # intensity_mean=(200, 250),
+        # intensity_freq_exponent=(-2.5, -1.5),
+        # alpha_min=(0.5, 1.0),
+        # intensity_coarse_scale=(2, 10),
+        # alpha_multiplier=(0.85, 1.0),
+        # alpha_size_px_max=(5, 15),
+        # alpha_freq_exponent=(-2.5, -1.5),
+        # sparsity=(0.5, 1.0),
+        # density_multiplier=(0.3, 0.7),
+        # seed=random.randint(1, 100)
+        # )
+        # ]),
+
+        # rain
+        # iaa.Sequential([
+        #                 iaa.Rain(drop_size=(0.02, 0.2),speed=(0.01, 0.1))
+        #             ]),
+
+    #     # snow
+        # iaa.Sequential([
+        #                 iaa.Snowflakes(flake_size=(0.4, 1.0),speed=(0.001, 0.05))
+        #             ]),
+
+    #     # dark
+        # iaa.Sequential([
+        #     iaa.Multiply((0.5, 0.75)),  # 乘以0.5到0.75之间的数，随机减少亮度
+        #     iaa.Add((-40, -10))  # 在所有像素上减去10到40的值，进一步降低亮度
+        # ]),
+
+    #     # light
+        # iaa.Sequential([
+        #                 iaa.Multiply((1.25, 1.5)),  # 乘以1.25到1.5之间的数，随机增加亮度
+        #                 iaa.Add((10, 40))  # 在所有像素上增加10到40的值，进一步增加亮度
+        #             ]),
 
 
+    #     # fog_rain
+        # iaa.Sequential([
+        #                 iaa.CloudLayer(  intensity_mean=(200, 250),
+        # intensity_freq_exponent=(-2.5, -1.5),
+        # alpha_min=(0.5, 1.0),
+        # intensity_coarse_scale=(2, 10),
+        # alpha_multiplier=(0.85, 1.0),
+        # alpha_size_px_max=(5, 15),
+        # alpha_freq_exponent=(-2.5, -1.5),
+        # sparsity=(0.5, 1.0),
+        # density_multiplier=(0.3, 0.7),
+        # seed=42),
+        #                 iaa.Rain(drop_size=(0.1, 0.2), speed=(0.1, 0.2))
+        #             ]),
+
+
+    #     # fog_snow
+        # iaa.Sequential([
+        #                 iaa.CloudLayer(  intensity_mean=(200, 250),
+        # intensity_freq_exponent=(-2.5, -1.5),
+        # alpha_min=(0.5, 1.0),
+        # intensity_coarse_scale=(2, 10),
+        # alpha_multiplier=(0.85, 1.0),
+        # alpha_size_px_max=(5, 15),
+        # alpha_freq_exponent=(-2.5, -1.5),
+        # sparsity=(0.5, 1.0),
+        # density_multiplier=(0.3, 0.7),
+        # seed=43),
+        #                 iaa.Snowflakes(flake_size=(0.2, 0.6), speed=(0.01, 0.05))
+        #             ]),
+
+        # rain_snow
+        # iaa.Sequential([
+        #                 iaa.Rain(drop_size=(0.1, 0.2), speed=(0.1, 0.2)),
+        #                 iaa.Snowflakes(flake_size=(0.2, 0.6), speed=(0.01, 0.05))
+        #             ]),
+
+
+    #     # wind
+    #     iaa.Sequential([
+    # iaa.MotionBlur(angle=(0, 360), k=(5, 15), seed=44)
+    #                 ]),
+
+
+            iaa.Resize({"height": opt.h, "width": opt.w}, interpolation=3),
+        ]
+)
+    data_transforms_iaa = transforms.Compose([
+        # transforms.Resize((opt.h, opt.w), interpolation=3),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
 data_dir = test_dir
+
+
+qwen_model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+    "/home/wjh/project/VLM/Qwen2.5-VL-main/Qwen2.5-VL-7B-int",
+    torch_dtype=torch.float16,
+    attn_implementation="flash_attention_2",
+    device_map="auto"
+)
+processor = AutoProcessor.from_pretrained("/home/wjh/project/VLM/Qwen2.5-VL-main/Qwen2.5-VL-7B-int")
+processor.tokenizer.padding_side = 'left'
+qwen_model.eval()
 
 if opt.multi:
     image_datasets = {x: datasets.ImageFolder( os.path.join(data_dir,x) ,data_transforms) for x in ['gallery','query','multi-query']}
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=opt.batchsize,
                                              shuffle=False, num_workers=16) for x in ['gallery','query','multi-query']}
+elif opt.iaa:
+    print('------------------processing images using iaa----------------------')
+    image_datasets = {x: datasets.ImageFolder( os.path.join(data_dir,x), data_transforms) for x in ['gallery_satellite','query_satellite']}
+    for x in ['query_drone', 'gallery_drone']:
+        image_datasets[x] = ImageFolder_iaa(os.path.join(data_dir,x), data_transforms_iaa, iaa_transform=iaa_transform)
+
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=opt.batchsize,
+                                             shuffle=False, num_workers=8) for x in ['gallery_satellite', 'gallery_drone', 'query_satellite', 'query_drone']}
+    
 else:
     # image_datasets = {x: datasets.ImageFolder( os.path.join(data_dir,x) ,data_transforms) for x in ['gallery_satellite','gallery_drone', 'gallery_street', 'query_satellite', 'query_drone', 'query_street']}
     image_datasets = {x: datasets.ImageFolder( os.path.join(data_dir,x) ,data_transforms) for x in ['gallery_satellite','gallery_drone', 'gallery_street']}
@@ -160,7 +358,7 @@ else:
                                              shuffle=False, num_workers=16) for x in ['gallery_satellite', 'gallery_drone','gallery_street', 'query_drone']}
     else:
         dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=opt.batchsize,
-                                             shuffle=False, num_workers=16) for x in ['gallery_satellite', 'gallery_drone','gallery_street', 'query_satellite', 'query_drone']}
+                                             shuffle=False, num_workers=8) for x in ['gallery_satellite', 'gallery_drone','gallery_street', 'query_satellite', 'query_drone']}
     if style != 'none':
         print('using style is-----------------:', style)
         dataloaders['query_drone_style'] =  torch.utils.data.DataLoader(image_datasets['query_drone_style'], batch_size=opt.batchsize,
@@ -232,7 +430,6 @@ def extract_feature(model,dataloaders, view_index = 1):
             # 2. To keep the cosine score==1, sqrt(6) is added to norm the whole feature (2048*6).
             fnorm = torch.norm(ff, p=2, dim=1, keepdim=True) * np.sqrt(opt.block) 
             ff = ff.div(fnorm.expand_as(ff))
-            # ff = ff.permute(0, 2, 1).contiguous().view(ff.size(0), -1)
             ff = ff.view(ff.size(0), -1)
         else:
             fnorm = torch.norm(ff, p=2, dim=1, keepdim=True)
@@ -269,21 +466,24 @@ else:
 model = model.eval()
 if use_gpu:
     model = model.cuda()
-
+# print(model)
 # Extract feature
 since = time.time()
 
-# gallery_name = 'gallery_street' 
-# query_name = 'query_satellite'
-
-gallery_name = 'gallery_satellite'
-# query_name = 'query_street'
-
 # gallery_name = 'gallery_street'
+
+# query_name = 'query_satellite'
+# gallery_name = 'gallery_drone'
+
 query_name = 'query_drone'
+gallery_name = 'gallery_satellite'
+
+# query_name = 'query_street'
+# gallery_name = 'gallery_street'
+
 # query_name = 'query_drone_style'
 # query_name = 'query_drone_one'
-# gallery_name = 'gallery_drone'
+
 # gallery_name = 'gallery_drone_style'
 # gallery_name = 'gallery_satellite_usa_un'
 which_gallery = which_view(gallery_name)
