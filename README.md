@@ -9,7 +9,7 @@ Extensive experiments validate the effectiveness of WeatherPrompt. On University
 
 
 ## News
-* The **prompt** is released, Welcome to communicate！
+* The **CoT Prompt** is released, Welcome to communicate！
 * The **Models** and **Weights** are coming soon. 
 
 
