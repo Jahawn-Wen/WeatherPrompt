@@ -13,8 +13,18 @@ Extensive experiments validate the effectiveness of WeatherPrompt. On University
 
 
 ## CoT Prompt
-* The **prompt** is coming soon. 
-* description format: [Weather Condition], [building quantity/arrangement], [relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable].
+* The **prompt** format:
+```
+Given an aerial image. Based only on the image, generate a concise and truthful description (target length 100–120 characters; if this is hard to meet, prioritize accuracy and do not pad), avoiding any speculation. Follow these steps:
+
+1. Overall assessment: Observe the sky, lighting, and color tone to determine the image’s overall atmosphere. Based solely on these visual cues, describe the primary weather impression.
+2. Local detail analysis: Look for specific evidence such as raindrops, fog, snowflakes, shadow changes, reflections, or any visual cues indicating weather effects.
+3. Weather inference: Based on your comprehensive and detailed observations, infer the specific weather condition. Clearly state the weather you observe.
+4. Describe visible structures (buildings, roads, open spaces): their quantities, arrangement, and spatial relationships.
+5. Do not infer or guess any elements that are not visible.
+6. Output format: [Weather description], [Building layout], [Landmarks (if visible)], [Relation to roads or surroundings], [Other layout features (if applicable)].
+``` 
+
 
 ## Models and Weights
 * The **Models** and **Weights** are coming soon. 
