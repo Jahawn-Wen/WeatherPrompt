@@ -93,7 +93,9 @@ Download [SUES-200](https://github.com/Reza-Zhu/SUES-200-Benchmark).
   year = "2025" }
 ```
 
-
+## ✨ Acknowledgement
+- Our code is based on [XVLM](https://github.com/zengyan-97/X-VLM)
+- [Qwen2.5-VL-32B](https://qwen.ai/research): Thanks a lot for the foundamental efforts!
 
 
 
