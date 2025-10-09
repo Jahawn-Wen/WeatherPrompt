@@ -228,29 +228,6 @@ if opt.iaa:
         # )
         # ]),
 
-        # rain
-        # iaa.Sequential([
-        #                 iaa.Rain(drop_size=(0.02, 0.2),speed=(0.01, 0.1))
-        #             ]),
-
-    #     # snow
-        # iaa.Sequential([
-        #                 iaa.Snowflakes(flake_size=(0.4, 1.0),speed=(0.001, 0.05))
-        #             ]),
-
-    #     # dark
-        # iaa.Sequential([
-        #     iaa.Multiply((0.5, 0.75)),  # 乘以0.5到0.75之间的数，随机减少亮度
-        #     iaa.Add((-40, -10))  # 在所有像素上减去10到40的值，进一步降低亮度
-        # ]),
-
-    #     # light
-        # iaa.Sequential([
-        #                 iaa.Multiply((1.25, 1.5)),  # 乘以1.25到1.5之间的数，随机增加亮度
-        #                 iaa.Add((10, 40))  # 在所有像素上增加10到40的值，进一步增加亮度
-        #             ]),
-
-
     #     # fog_rain
         # iaa.Sequential([
         #                 iaa.CloudLayer(  intensity_mean=(200, 250),
