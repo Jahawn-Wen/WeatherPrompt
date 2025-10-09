@@ -61,7 +61,7 @@ Organize `dataset` folder as follows:
 
 ## Models and Weights
 *  The **Models** and **Weights** are released.
-*  sparkles:[Download The Trained Model Weights[3wjy]](https://pan.baidu.com/s/1bvu80h-GJ-s0Cffyk2pqbA?pwd=3wjy)
+* [Download The Trained Model Weights[3wjy]](https://pan.baidu.com/s/1bvu80h-GJ-s0Cffyk2pqbA?pwd=3wjy)
 
 Organize `XVLM` folder as follows:
 
