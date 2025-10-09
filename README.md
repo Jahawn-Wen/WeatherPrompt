@@ -62,6 +62,24 @@ Organize `dataset` folder as follows:
 ## Models and Weights
 * The **Models** and **Weights** are coming soon. 
 
+Organize `XVLM` folder as follows:
+
+```
+|-- XVLM/
+|    |-- X-VLM-master/
+|        |-- accelerators/
+|        |-- configs/
+|        |-- ...
+|        |-- Captioning_pretrain.py
+|        |-- ...
+|    |-- 4m_base_model_state_step_199999.th
+|    |-- 16m_base_model_state_step_199999.th
+|-- image_folder.py/
+|-- ...
+```
+
+
+
 ## Usage
 ### Install Requirements
 
