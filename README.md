@@ -11,6 +11,7 @@ Extensive experiments validate the effectiveness of WeatherPrompt. On University
 ## News
 * The **CoT Prompt** is released, Welcome to communicate！
 * The **Models** and **Weights** are released, Welcome to communicate！
+* We provide some of the tools in the **Weather.py**.
 
 
 ## CoT Prompt
