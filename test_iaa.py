@@ -284,7 +284,7 @@ data_dir = test_dir
 
 
 qwen_model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-    "/home/wjh/project/VLM/Qwen2.5-VL-main/Qwen2.5-VL-7B-int",
+    "/project/VLM/Qwen2.5-VL-main/Qwen2.5-VL-32B-int",
     torch_dtype=torch.float16,
     attn_implementation="flash_attention_2",
     device_map="auto"
