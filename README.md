@@ -10,7 +10,7 @@ Extensive experiments validate the effectiveness of WeatherPrompt. On University
 
 ## News
 * The **CoT Prompt** is released, Welcome to communicate！
-* The **Models** and **Weights** are coming soon. 
+* The **Models** and **Weights** are released, Welcome to communicate！
 
 
 ## CoT Prompt
@@ -60,7 +60,8 @@ Organize `dataset` folder as follows:
 
 
 ## Models and Weights
-* The **Models** and **Weights** are coming soon. 
+*  The **Models** and **Weights** are released.
+*  sparkles:[Download The Trained Model Weights[3wjy]](https://pan.baidu.com/s/1bvu80h-GJ-s0Cffyk2pqbA?pwd=3wjy)
 
 Organize `XVLM` folder as follows:
 
@@ -100,7 +101,11 @@ Download [University-1652](https://github.com/layumi/University1652-Baseline) up
 Download [SUES-200](https://github.com/Reza-Zhu/SUES-200-Benchmark).
 
 ## Train & Evaluation
-* The **Code** is coming soon.
+### Train & Evaluation University-1652/SUES-200 (Change the dataset path)
+```  
+sh run.sh
+sh run_test.sh
+```
 
 ## Reference
 
