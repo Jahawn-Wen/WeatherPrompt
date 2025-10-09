@@ -69,8 +69,8 @@
 # weather_names = ['normal', 'fog', 'rain', 'snow', 'dark', 'light',
 #                  'fog_rain', 'fog_snow', 'rain_snow', 'wind']
 
-# drone_root = '/home/wjh/project/MuseNet-master-test-vit/dataset/University-Release/test/gallery_drone'
-# output_root = '/home/wjh/project/MuseNet-master-test-vit/output_weather_test/gallery_drone'
+# drone_root = '/home/wjh/project/WeatherPrompt/dataset/University-Release/test/gallery_drone'
+# output_root = '/home/wjh/project/WeatherPrompt/output_weather_test/gallery_drone'
 # os.makedirs(output_root, exist_ok=True)
 
 # # 外层进度条：类别遍历
@@ -128,8 +128,8 @@
 #                  'fog_rain','fog_snow','rain_snow','wind']
 
 # # —— 2. 指定训练集根目录和输出目录 ——
-# training_root = '/home/wjh/project/MuseNet-master-test_sam/dataset/2/SUES-200-512x512/Testing'
-# output_root   = '/home/wjh/project/MuseNet-master-test-vit/output_weather_SUES_test/gallery_drone'
+# training_root = '/home/wjh/project/WeatherPrompt/dataset/2/SUES-200-512x512/Testing'
+# output_root   = '/home/wjh/project/WeatherPrompt/output_weather_SUES_test/gallery_drone'
 # os.makedirs(output_root, exist_ok=True)
 
 # # —— 3. 遍历每个子集 —— 
@@ -180,8 +180,8 @@ from tqdm import tqdm
 from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
 
 # 配置路径
-weather_root = '/home/wjh/project/MuseNet-master-test-vit/output_weather_test/gallery_drone'
-output_json = '/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_test_32B_gallery_new.json'
+weather_root = '/home/wjh/project/WeatherPrompt/output_weather_test/gallery_drone'
+output_json = '/home/wjh/project/WeatherPrompt/multiweather_captions_test_32B_gallery_new.json'
 
 # 加载 Qwen 模型和处理器
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -266,8 +266,8 @@ print(f"✅ Saved captions to {output_json}")
 # from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
 
 # # —— 修改这两行为你的路径 —— 
-# weather_root = '/home/wjh/project/MuseNet-master-test-vit/output_weather_SUES_test/query_drone'
-# output_json  = '/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_test_32B_SUES.json'
+# weather_root = '/home/wjh/project/WeatherPrompt/output_weather_SUES_test/query_drone'
+# output_json  = '/home/wjh/project/WeatherPrompt/multiweather_captions_test_32B_SUES.json'
 
 # # 加载 Qwen 模型和处理器
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -284,8 +284,8 @@ print(f"✅ Saved captions to {output_json}")
 # prompt = processor.apply_chat_template(
 #     [{"role":"user","content":[
 #         {"type":"image","image":None},
-#         {"type":"text","text":"You are given an aerial image. Generate a concise and factual description (100–120 words) focusing only on visible elements. Follow these instructions: 1.Choose exactly one weather condition keyword from: dark, light, sunny, rainy, foggy, rain-snow, rain-fog, snow-fog, fog-rain, windy. 2.Describe visible structures (buildings, roads, open spaces): their quantity, arrangement, and spatial relationships. 3.Do not infer or guess any unseen elements. Output format:[Weather Condition keyword], [building quantity/arrangement], [relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable]."}
-#     ]}],
+#         {"type":"text","text":"**English translation:**Given an aerial image. Based only on the image, generate a concise and truthful description (target length 100–120 characters; if this is hard to meet, prioritize accuracy and do not pad), avoiding any speculation. Follow these steps: 1. Overall assessment: Observe the sky, lighting, and color tone to determine the image’s overall atmosphere. Based solely on these visual cues, describe the primary weather impression. 2. Local detail analysis: Look for specific evidence such as raindrops, fog, snowflakes, shadow changes, reflections, or any visual cues indicating weather effects. 3. Weather inference: Based on your comprehensive and detailed observations, infer the specific weather condition. Clearly state the weather you observe. 4. Describe visible structures (buildings, roads, open spaces): their quantities, arrangement, and spatial relationships. 5. Do not infer or guess any elements that are not visible. 6. Output format: [Weather description], [Building layout], [Landmarks (if visible)], [Relation to roads or surroundings], [Other layout features (if applicable)]."}
+    ]}],
 #     tokenize=False,
 #     add_generation_prompt=True
 # )
@@ -358,212 +358,6 @@ print(f"✅ Saved captions to {output_json}")
 
 
 
-##qwen3 版本
-# import os
-# import json
-# import torch
-# from PIL import Image
-# from tqdm import tqdm
-# from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
-
-# # 配置路径
-# weather_root = '/home/wjh/project/MuseNet-master-test-vit/output_weather'
-# output_json = '/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_qwen3_32B.json'
-
-# # 加载 Qwen 模型和处理器
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# qwen_model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-#     "/home/wjh/project/VLM/Qwen3",
-#     torch_dtype=torch.float16,
-#     attn_implementation="flash_attention_2",
-#     device_map="auto"
-# ).eval()
-# processor = AutoProcessor.from_pretrained("/home/wjh/project/VLM/Qwen3")
-# processor.tokenizer.padding_side = 'left'
-
-# # 构建 prompt
-# prompt = processor.apply_chat_template(
-#     [{"role":"user","content":[
-#         {"type":"image","image":None},
-#         {"type":"text","text":"You are given an aerial image. Generate a concise and factual description (100–120 words) focusing only on visible elements. Follow these instructions: 1.Choose exactly one weather condition keyword from: dark, light, sunny, rainy, foggy, rain-snow, rain-fog, snow-fog, fog-rain, windy. 2.Describe visible structures (buildings, roads, open spaces): their quantity, arrangement, and spatial relationships. 3.Do not infer or guess any unseen elements. Output format:[Weather Condition keyword], [building quantity/arrangement], [relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable]."}
-#     ]}],
-#     tokenize=False,
-#     add_generation_prompt=True
-# )
-
-# captions = {}
-
-# # 遍历每个类别文件夹（Batch 全类别天气图像）
-# for class_id in tqdm(os.listdir(weather_root), desc="Classes"):
-#     class_dir = os.path.join(weather_root, class_id)
-#     if not os.path.isdir(class_dir):
-#         continue
-
-#     # 收集本类别下所有天气图像
-#     img_names = sorted([
-#         f for f in os.listdir(class_dir)
-#         if f.lower().endswith(('.jpg','.jpeg','.png'))
-#     ])
-#     if not img_names:
-#         continue
-
-#     # 批量加载 PIL 图像
-#     images = [Image.open(os.path.join(class_dir, name)).convert("RGB") for name in img_names]
-
-#     # 批量编码
-#     inputs = processor(
-#         text=[prompt] * len(images),
-#         images=images,
-#         padding=True,
-#         return_tensors="pt"
-#     ).to(device)
-
-#     # 一次性生成本类别所有天气 caption
-#     with torch.no_grad():
-#         outputs = qwen_model.generate(
-#             **inputs,
-#             max_new_tokens=128,
-#             max_length=inputs["input_ids"].size(1) + 128
-#         )
-
-#     # 去掉 prompt 部分，batch_decode
-#     input_len = inputs["input_ids"].size(1)
-#     trimmed = outputs[:, input_len:]
-#     captions_list = processor.batch_decode(trimmed, skip_special_tokens=True)
-
-#     # 存入 captions 字典
-#     captions[class_id] = {}
-#     for name, cap in zip(img_names, captions_list):
-#         weather = name.rsplit('-',1)[-1].rsplit('.',1)[0]
-#         captions[class_id][weather] = cap
-
-# # 写入 JSON
-# with open(output_json, 'w', encoding='utf-8') as f:
-#     json.dump(captions, f, ensure_ascii=False, indent=2)
-
-# print(f"✅ Saved captions to {output_json}")
-
-
-
-
-### 另一种实现方式，使用 OpenAI 的 API 接口
-# import os
-# import io
-# import json
-# import base64
-# from PIL import Image
-# from tqdm import tqdm
-# from openai import OpenAI
-
-# class Qwen2_5_APIForConditionalGeneration:
-#     """
-#     每次只处理一条 prompt+image，保证每张图都返回自己的 caption。
-#     """
-#     def __init__(self, api_key: str, base_url: str,
-#                  model_name: str = "qwen3-32b",
-#                  max_tokens: int = 128):
-#         self.client     = OpenAI(api_key=api_key, base_url=base_url)
-#         self.model_name = model_name
-#         self.max_tokens = max_tokens
-#         # qwen3 系列只支持流式输出
-#         self.use_stream = self.model_name.startswith("qwen3")
-
-#     def generate_single(self, prompt: str, image_uri: str) -> str:
-#         """
-#         对单张图单次调用，返回最终拼接好的 caption。
-#         """
-#         message = [{
-#             "role": "user",
-#             "content": [
-#                 {"type": "text",      "text": prompt},
-#                 {"type": "image_url", "image_url": {"url": image_uri}}
-#             ]
-#         }]
-
-#         if not self.use_stream:
-#             resp = self.client.chat.completions.create(
-#                 model=self.model_name,
-#                 messages=message,
-#                 max_tokens=self.max_tokens
-#             )
-#             return resp.choices[0].message.content.strip()
-
-#         # 流式模型（qwen3-32b 等）
-#         out = ""
-#         stream = self.client.chat.completions.create(
-#             model=self.model_name,
-#             messages=message,
-#             max_tokens=self.max_tokens,
-#             stream=True
-#         )
-#         for chunk in stream:
-#             delta = getattr(chunk.choices[0].delta, "content", None)
-#             if delta:
-#                 out += delta
-#         return out.strip()
-
-
-# if __name__ == "__main__":
-#     WEATHER_ROOT = "/home/wjh/project/MuseNet-master-test-vit/output_weather_test"
-#     OUTPUT_JSON  = "/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_test_32B.json"
-
-#     API_KEY    = "sk-a29a609fbae44958aa58932185a97d88"
-#     BASE_URL   = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-#     # MODEL_NAME = "qwen3-32b"
-#     MODEL_NAME = "qwen2.5-vl-32b-instruct"
-#     MAX_TOKENS = 128
-
-#     PROMPT = (
-#         "You are given an aerial image. Generate a concise and factual description "
-#         "(100–120 words) focusing only on visible elements. Follow these instructions: "
-#         "1. Choose exactly one weather condition keyword from: dark, light, sunny, rainy, foggy, "
-#         "rain-snow, rain-fog, snow-fog, fog-rain, windy. "
-#         "2. Describe visible structures (buildings, roads, open spaces): their quantity, arrangement, "
-#         "and spatial relationships. "
-#         "3. Do not infer or guess any unseen elements. "
-#         "Output format:[Weather Condition keyword], [building quantity/arrangement], "
-#         "[relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable]."
-#     )
-
-#     api_model = Qwen2_5_APIForConditionalGeneration(
-#         api_key=API_KEY,
-#         base_url=BASE_URL,
-#         model_name=MODEL_NAME,
-#         max_tokens=MAX_TOKENS
-#     )
-
-#     all_captions = {}
-
-#     for class_id in tqdm(os.listdir(WEATHER_ROOT), desc="Classes"):
-#         class_dir = os.path.join(WEATHER_ROOT, class_id)
-#         if not os.path.isdir(class_dir):
-#             continue
-
-#         img_names = sorted(f for f in os.listdir(class_dir)
-#                            if f.lower().endswith((".jpg", ".jpeg", ".png")))
-#         if not img_names:
-#             continue
-
-#         all_captions[class_id] = {}
-#         for img_name in tqdm(img_names, desc=f"  {class_id}", leave=False):
-#             img_path = os.path.join(class_dir, img_name)
-#             img = Image.open(img_path).convert("RGB")
-#             buf = io.BytesIO()
-#             img.save(buf, format="JPEG")
-#             b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
-#             uri = f"data:image/jpeg;base64,{b64}"
-
-#             caption = api_model.generate_single(PROMPT, uri)
-#             weather = os.path.splitext(img_name)[0].split("-")[-1]
-#             all_captions[class_id][weather] = caption
-
-#     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
-#         json.dump(all_captions, f, ensure_ascii=False, indent=2)
-
-#     print(f"✅ Saved captions to {OUTPUT_JSON}")
-
-
-
 
 
 # import json
@@ -571,7 +365,7 @@ print(f"✅ Saved captions to {output_json}")
 
 # # 你的 JSON 路径
 # json_path = Path(
-#     "/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_test_32B_gallery.json"
+#     "/home/wjh/project/WeatherPrompt/multiweather_captions_test_32B_gallery.json"
 # )
 
 # # 1. 读取 JSON
@@ -612,52 +406,6 @@ print(f"✅ Saved captions to {output_json}")
 
 
 
-# from PIL import Image
-# import os
-
-# def split_image_to_patches(
-#     image_path: str,
-#     patch_size: int = 32,
-#     save_dir: str = None
-# ):
-#     """
-#     将一张图片按照 patch_size 切分，并返回 patch 列表。
-#     如果指定了 save_dir 则会把每个 patch 也保存为文件。
-#     """
-#     img = Image.open(image_path).convert("RGB")
-#     W, H = img.size
-#     assert W % patch_size == 0 and H % patch_size == 0, \
-#         f"图像尺寸必须能被 patch 大小整除：{W}×{H} vs {patch_size}"
-
-#     patches = []
-#     num_x = W // patch_size
-#     num_y = H // patch_size
-
-#     # 如果要保存 patch，则创建目录
-#     if save_dir:
-#         os.makedirs(save_dir, exist_ok=True)
-
-#     idx = 0
-#     for y in range(0, H, patch_size):
-#         for x in range(0, W, patch_size):
-#             box = (x, y, x + patch_size, y + patch_size)
-#             patch = img.crop(box)       # 裁剪
-#             patches.append(patch)
-
-#             if save_dir:
-#                 fname = f"patch_{y//patch_size:02d}_{x//patch_size:02d}.png"
-#                 patch.save(os.path.join(save_dir, fname))
-
-#             idx += 1
-
-#     return patches
-
-# if __name__ == "__main__":
-#     # 示例用法
-#     IMAGE_PATH = "/home/wjh/project/MuseNet-master-test-vit/output_weather/1088/image-38-rain.jpeg"
-#     SAVE_DIR   = "/home/wjh/project/MuseNet-master-test-vit"
-#     patches = split_image_to_patches(IMAGE_PATH, patch_size=32, save_dir=SAVE_DIR)
-#     print(f"共生成 {len(patches)} 个 patch，保存在目录：{SAVE_DIR}")
 
 
 # import os
@@ -670,22 +418,17 @@ print(f"✅ Saved captions to {output_json}")
 # # -----------------------
 # # 配置区
 # # -----------------------
-# API_KEY    = "sk-oovhevhihhbecsqpktzayogcmywgvybvinjleusgvycypnjn"  # 建议改为环境变量读取
+# API_KEY    = "XXX"  # 建议改为环境变量读取
 # BASE_URL   = "https://api.siliconflow.cn/v1"  # 或者 "https://api.openai.com/v1"
 # MODEL_NAME = "THUDM/GLM-4.1V-9B-Thinking"
 
 # # 本地图片根目录：gallery_drone 下每个子文件夹是一个 class_id
-# WEATHER_ROOT = "/home/wjh/project/MuseNet-master-test-vit/output_weather"
-# OUTPUT_JSON  = "/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_glm_thinking.json"
+# WEATHER_ROOT = "/home/wjh/project/WeatherPrompt/output_weather"
+# OUTPUT_JSON  = "/home/wjh/project/WeatherPrompt/multiweather_captions_glm_thinking.json"
 
 # # 通用 prompt
 # PROMPT_TEXT = (
-#     "You are given an aerial image. Generate a concise and factual description (100–120 words) focusing only on visible elements. "
-#     "Follow these instructions: "
-#     "1. Choose exactly one weather condition keyword from: dark, light, sunny, rainy, foggy, rain-snow, rain-fog, snow-fog, fog-rain, windy. "
-#     "2. Describe visible structures (buildings, roads, open spaces): their quantity, arrangement, and spatial relationships. "
-#     "3. Do not infer or guess any unseen elements. "
-#     "Output format: [Weather Condition keyword], [building quantity/arrangement], [relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable]."
+#     "**English translation:**Given an aerial image. Based only on the image, generate a concise and truthful description (target length 100–120 characters; if this is hard to meet, prioritize accuracy and do not pad), avoiding any speculation. Follow these steps: 1. Overall assessment: Observe the sky, lighting, and color tone to determine the image’s overall atmosphere. Based solely on these visual cues, describe the primary weather impression. 2. Local detail analysis: Look for specific evidence such as raindrops, fog, snowflakes, shadow changes, reflections, or any visual cues indicating weather effects. 3. Weather inference: Based on your comprehensive and detailed observations, infer the specific weather condition. Clearly state the weather you observe. 4. Describe visible structures (buildings, roads, open spaces): their quantities, arrangement, and spatial relationships. 5. Do not infer or guess any elements that are not visible. 6. Output format: [Weather description], [Building layout], [Landmarks (if visible)], [Relation to roads or surroundings], [Other layout features (if applicable)]."}
 # )
 
 # # -----------------------
@@ -778,19 +521,14 @@ print(f"✅ Saved captions to {output_json}")
 # # -----------------------
 # # 配置区
 # # -----------------------
-# API_KEY      = os.getenv("OPENAI_API_KEY", "sk-oovhevhihhbecsqpktzayogcmywgvybvinjleusgvycypnjn")   # 建议用环境变量
+# API_KEY      = os.getenv("OPENAI_API_KEY", "xxx")   # 建议用环境变量
 # BASE_URL     = "https://api.siliconflow.cn/v1"         # 或 "https://api.openai.com/v1"
 # MODEL_NAME   = "THUDM/GLM-4.1V-9B-Thinking"
-# WEATHER_ROOT = "/home/wjh/project/MuseNet-master-test-vit/output_weather"
-# OUTPUT_JSON  = "/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_glm_thinking.json"
+# WEATHER_ROOT = "/home/wjh/project/WeatherPrompt/output_weather"
+# OUTPUT_JSON  = "/home/wjh/project/WeatherPrompt/multiweather_captions_glm_thinking.json"
 
 # PROMPT_TEXT = (
-#     "You are given an aerial image. Generate a concise and factual description (100–120 words) focusing only on visible elements. "
-#     "Follow these instructions: "
-#     "1. Choose exactly one weather condition keyword from: dark, light, sunny, rainy, foggy, rain-snow, rain-fog, snow-fog, fog-rain, windy. "
-#     "2. Describe visible structures (buildings, roads, open spaces): their quantity, arrangement, and spatial relationships. "
-#     "3. Do not infer or guess any unseen elements. "
-#     "Output format: [Weather Condition keyword], [building quantity/arrangement], [relation to roads or surroundings], [landmarks if visible], [additional layout features if applicable]."
+#   "**English translation:**Given an aerial image. Based only on the image, generate a concise and truthful description (target length 100–120 characters; if this is hard to meet, prioritize accuracy and do not pad), avoiding any speculation. Follow these steps: 1. Overall assessment: Observe the sky, lighting, and color tone to determine the image’s overall atmosphere. Based solely on these visual cues, describe the primary weather impression. 2. Local detail analysis: Look for specific evidence such as raindrops, fog, snowflakes, shadow changes, reflections, or any visual cues indicating weather effects. 3. Weather inference: Based on your comprehensive and detailed observations, infer the specific weather condition. Clearly state the weather you observe. 4. Describe visible structures (buildings, roads, open spaces): their quantities, arrangement, and spatial relationships. 5. Do not infer or guess any elements that are not visible. 6. Output format: [Weather description], [Building layout], [Landmarks (if visible)], [Relation to roads or surroundings], [Other layout features (if applicable)]."}
 # )
 
 # # -----------------------
@@ -874,45 +612,5 @@ print(f"✅ Saved captions to {output_json}")
 #     print(f"✅ Done! Captions saved to {OUTPUT_JSON}")
 
 
-
-# import json
-# import pandas as pd
-# import matplotlib.pyplot as plt
-# from collections import Counter
-
-# # —— 配置 —— 
-# JSON_PATH = "/home/wjh/project/MuseNet-master-test-vit/multiweather_captions_test_32B.json"
-
-# # —— 读取 JSON —— 
-# with open(JSON_PATH, 'r', encoding='utf-8') as f:
-#     data = json.load(f)
-
-# # —— 提取首词 —— 
-# first_words = []
-# for weathers in data.values():
-#     for caption in weathers.values():
-#         # 取逗号前的首段文字，去掉多余空白，并统一小写
-#         w = caption.split(',', 1)[0].strip().lower()
-#         first_words.append(w)
-
-# # —— 统计出现次数 —— 
-# counts = Counter(first_words)
-# df = (
-#     pd.DataFrame.from_dict(counts, orient='index', columns=['count'])
-#       .rename_axis('first_word')
-#       .reset_index()
-#       .sort_values('count', ascending=False)
-# )
-
-# # —— 打印表格 —— 
-# print(df.to_string(index=False))
-
-# # —— 可视化 —— 
-# plt.figure(figsize=(8, 6))
-# plt.bar(df['first_word'], df['count'])
-# plt.xticks(rotation=45, ha='right')
-# plt.xlabel('首词')
-# plt.ylabel('出现次数')
-# plt.title('Caption 首词分布统计')
 # plt.tight_layout()
 # plt.show()
