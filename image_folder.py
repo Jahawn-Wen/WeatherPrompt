@@ -15,7 +15,6 @@ from torchvision import get_image_backend
 IMG_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.pgm', '.tif')
 
 
-# ====== 基础工具 ======
 def has_file_allowed_extension(filename, extensions=IMG_EXTENSIONS):
     return filename.lower().endswith(tuple(extensions))
 
@@ -414,7 +413,7 @@ class PathFolder_qwen(Data.Dataset):
 
     def set_epoch(self, epoch):
         self.current_epoch = epoch
-        self.img_num = 0  # 每个 epoch 重置计数
+        self.img_num = 0 
 
     def __getitem__(self, index):
         path, target = (random.choice(self.imgs[index]) if self.select else self.imgs[index])
@@ -450,7 +449,7 @@ class PathFolder_qwen(Data.Dataset):
                 img = Image.fromarray(img)
             img = self.transform(img)
 
-        # 保存到临时目录（保持相对路径结构）
+
         if isinstance(img, Image.Image):
             img_to_save = img
         else:
