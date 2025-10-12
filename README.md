@@ -62,7 +62,7 @@ Organize `dataset` folder as follows:
 
 ## Models and Weights
 *  The **Models** and **Weights** are released.
-* Download The Trained Model Weights:[Baidu Yun](https://pan.baidu.com/s/1bvu80h-GJ-s0Cffyk2pqbA?pwd=3wjy)[3wjy]
+* Download The Trained Model Weights and Description:[Baidu Yun](https://pan.baidu.com/s/1V9VxhZM2ZyDuCllNH6M7xg?pwd=u2en)[u2en]
 
 Organize `XVLM` folder as follows:
 
