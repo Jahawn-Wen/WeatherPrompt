@@ -27,7 +27,7 @@ Given an aerial image. Based only on the image, generate a concise and truthful 
 6. Output format: [Weather description], [Building layout], [Landmarks (if visible)], [Relation to roads or surroundings], [Other layout features (if applicable)].
 ``` 
 
-## Open-Weather Description
+## Open-Weather Description (can be downloaded in this repo)
 * We utilize the [imgaug](https://github.com/aleju/imgaug) library to synthetically realistic weather variations.
 * We randomly select only one drone-view image per region as a representative.
 * We apply a pretrained large multimodal model [Qwen2.5-VL-32B](https://qwen.ai/research) for automatic weather description through CoT Prompt.
