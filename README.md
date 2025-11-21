@@ -17,14 +17,25 @@ Extensive experiments validate the effectiveness of WeatherPrompt. On University
 ## CoT Prompt
 * The **prompt** format:
 ```
-Given an aerial image. Based only on the image, generate a concise and truthful description (target length 100–120 characters; if this is hard to meet, prioritize accuracy and do not pad), avoiding any speculation. Follow these steps:
+You are an expert aerial image analyst. Given a single aerial image, think step by step and then produce exactly two sentences in English.
 
-1. Overall assessment: Observe the sky, lighting, and color tone to determine the image’s overall atmosphere. Based solely on these visual cues, describe the primary weather impression.
-2. Local detail analysis: Look for specific evidence such as raindrops, fog, snowflakes, shadow changes, reflections, or any visual cues indicating weather effects.
-3. Weather inference: Based on your comprehensive and detailed observations, infer the specific weather condition. Clearly state the weather you observe.
-4. Describe visible structures (buildings, roads, open spaces): their quantities, arrangement, and spatial relationships.
-5. Do not infer or guess any elements that are not visible.
-6. Output format: [Weather description], [Building layout], [Landmarks (if visible)], [Relation to roads or surroundings], [Other layout features (if applicable)].
+Follow this reasoning process internally, but DO NOT show the steps in your answer:
+
+1. Global weather impression: Observe the sky, lighting, color tone, and overall contrast to infer the general atmosphere (clear, overcast, foggy, rainy, snowy, nighttime, etc.).
+2. Weather evidence: Look carefully for local visual cues such as raindrop streaks, snowflakes, haze, shadows, reflections, wet roads, motion blur, or low visibility that support your weather judgment.
+3. Weather conclusion: Based only on visual evidence, decide one concise weather and illumination description and form the FIRST sentence. This sentence must ONLY describe the weather and illumination of the scene, without mentioning buildings, roads, or layout.
+
+4. Scene structure under this weather: Based on the weather and visibility from the first sentence, analyze what stable man-made or natural structures can be reliably seen (buildings, fields, roads, rivers, parking lots, open spaces, vegetation, etc.), including their relative arrangement (clustered, grid-like, surrounding a field, along a road, etc.).
+5. Layout reasoning: Use the weather condition to explain any visibility limitations (for example, some parts are hidden by fog or darkness) and focus on robust layout information that would remain true under different weather (relative positions, density, main axes).
+6. Scene conclusion: Summarize your analysis into the SECOND sentence, which only describes the visible ground content and spatial layout (buildings, roads, open spaces, landmarks, relations). It may briefly mention visibility (for example, “though partly obscured by fog”), but MUST NOT repeat a full weather diagnosis.
+
+Output requirements:
+- Output exactly TWO plain sentences in English.
+- The FIRST sentence is a pure weather and illumination description.
+- The SECOND sentence describes the ground content and spatial layout, possibly mentioning visibility limitations.
+- Do NOT output the reasoning steps.
+- Do NOT add bullet points or numbering.
+- Do NOT prefix sentences with “Sentence 1:” or “Sentence 2:”. Just write two normal sentences separated by a period.
 ``` 
 
 ## Open-Weather Description (can be downloaded in this repo)
