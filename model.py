@@ -375,7 +375,7 @@ class GatedFusion(nn.Module):
     def __init__(self, feat_dim=512):
         super().__init__()
 
-        self.alpha = nn.Parameter(torch.zeros(1))  
+        self.alpha = nn.Parameter(torch.tensor([2.0]))  
 
     def forward(self, orig_feat, attn_feat):
 
@@ -970,7 +970,7 @@ class three_view_net(nn.Module):
 
         in_feat = config_xvlm['embed_dim']
         self.classifier = ClassBlock(in_feat, class_num, droprate, return_f=circle)
-
+        self.fusion = GatedFusion(feat_dim=in_feat)
 
     def forward(self, x1, x2, x3, x4 = None, captions=None): # x4 is extra data
         text_feat = None
@@ -1016,7 +1016,9 @@ class three_view_net(nn.Module):
                 self.loss_itc = loss_itc
                 self.loss_itm = loss_itm
 
-           
+            cls_feat = img_feat
+            if self.training and use_text and text_feat is not None:
+                cls_feat = F.normalize(self.fusion(img_feat, text_feat), dim=-1)
             out = self.classifier(img_feat)  # [B, class_num]
             return out
 
