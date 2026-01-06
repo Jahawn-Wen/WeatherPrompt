@@ -938,7 +938,7 @@ from models.xvlm import XVLMBase
 
 
 class three_view_net(nn.Module):
-    def __init__(self, class_num, droprate, stride = 2, pool = 'avg', share_weight = False, VGG16=False, LPN=False, block=6, norm='bn', adain='a', circle=False, btnk=[1,0,1], conv_norm='none',config_xvlm=None):
+    def __init__(self, class_num, droprate, stride = 2, pool = 'avg', share_weight = False, VGG16=False, LPN=False, block=6, norm='bn', adain='a', circle=False, btnk=[1,0,1], conv_norm='none',config_xvlm=None,,load_text_params=False):
         super(three_view_net, self).__init__()
         self.LPN = LPN
         self.block = block
@@ -950,7 +950,7 @@ class three_view_net(nn.Module):
         self.xvlm = XVLMBase(
             config=config_xvlm,
             load_vision_params=True,
-            load_text_params=True,
+            load_text_params=False,
             use_contrastive_loss=True,
             use_matching_loss=True,
             use_mlm_loss=config_xvlm.get('use_mlm_loss', True),
