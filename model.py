@@ -12,8 +12,7 @@ from transformers import BertTokenizer, BertModel
 from transformers import BertForMaskedLM
 from torch.nn.functional import cosine_similarity
 import sys
-from project_utils  import update_average, get_model_list, load_network, save_network, make_weights_for_balanced_classes
-from models.xvlm import XVLMBase
+
 # from resnet_paibn import resnet50_ibn_a_adapter
 ######################################################################
 def weights_init_kaiming(m):
@@ -934,7 +933,8 @@ if proj_root not in sys.path:
 xvlm_root = './XVLM/X-VLM-master'
 if xvlm_root not in sys.path:
     sys.path.insert(1, xvlm_root)  
-
+from project_utils  import update_average, get_model_list, load_network, save_network, make_weights_for_balanced_classes
+from models.xvlm import XVLMBase
 
 
 class three_view_net(nn.Module):
