@@ -122,11 +122,14 @@ sh run_test.sh
 ## Reference
 
 ```bibtex
-@inproceedings{wen2025WeatherPrompt,
-  author = "Wen, Jiahao and Yu, Hang and Zheng, Zhedong",
-  title = "WeatherPrompt: Multi-modality Representation Learning for All-Weather Drone Visual Geo-Localization",
-  booktitle = "NeurIPS",
-  year = "2025" }
+@article{wen2026weatherprompt,
+  title={Weatherprompt: Multi-modality representation learning for all-weather drone visual geo-localization},
+  author={Wen, Jiahao and Yu, Hang and Zheng, Zhedong},
+  journal={Advances in Neural Information Processing Systems},
+  volume={38},
+  pages={32974--32994},
+  year={2026}
+}
 ```
 
 ## ✨ Acknowledgement
