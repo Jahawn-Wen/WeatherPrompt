@@ -8,6 +8,165 @@ We introduce a **training-free multi-weather prompting pipeline**: leveraging Un
 Extensive experiments validate the effectiveness of WeatherPrompt. On University-1652, Drone $\rightarrow$ Satellite achieves R@1 77.14\% / AP 80.20\% and Satellite $\rightarrow$ Drone achieves R@1 87.72\% / AP 76.39\%. Compared with representative methods, Drone $\rightarrow$ Satellite improves R@1 by 11.99\% and AP by 11.04\%, while Satellite $\rightarrow$ Drone improves R@1 by 3.04\% and AP by 10.64\%. On SUES-200, Satellite $\rightarrow$ Drone reaches R@1 80.73\% / AP 66.12\%, showing consistent advantages. Under real-world Dark+Rain+Fog videos, Drone $\rightarrow$ Satellite attains AP 64.94\% and Satellite $\rightarrow$ Drone AP 72.15\%, evidencing strong generalization and robustness in adverse weather. More details can be found at our paper: [WeatherPrompt: Multi-modality Representation Learning for All-Weather Drone Visual Geo-Localization](https://arxiv.org/pdf/2508.09560)
 <div align="center"><img src="assets/framework.jpg" width="600"></div>
 
+
+
+
+
+
+## 💡 Reproduction Tips
+
+> [!NOTE]
+> Thank you for your interest in and support for **WeatherPrompt**!
+>
+> Since releasing our code, we have received feedback regarding reproducibility and experimental configurations. Below are some common issues and practical tips to help you reproduce our results more smoothly.
+>
+> **Click on any section below to expand the details.**
+
+<details>
+<summary><b>📂 1. Hard-coded Paths</b></summary>
+
+<br>
+
+Some scripts retain **absolute paths from our original experimental environment**. Before running the code, please check and update the following paths:
+
+- Dataset directories
+- X-VLM model directory and configuration files
+- Pretrained model checkpoints
+- Caption JSON files
+- Model output and logging directories
+
+> [!TIP]
+> Verify all relevant paths before training or evaluation to avoid file-loading errors or configuration mismatches.
+
+</details>
+
+<details>
+<summary><b>⚙️ 2. X-VLM Configuration</b></summary>
+
+<br>
+
+Please ensure that **consistent X-VLM architectures and configurations** are used during training and evaluation.
+
+| Configuration | Description |
+|:---|:---|
+| `use_swin` | Enable the Swin Transformer visual backbone |
+| `use_clip_vit` | Enable the CLIP-ViT visual backbone |
+| `use_roberta` | Enable the RoBERTa text encoder |
+| `embed_dim` | Image-text embedding dimension |
+| `image_res` | Input image resolution |
+| Pretrained Weights | Corresponding visual and text encoder weights |
+
+> [!IMPORTANT]
+> Some configuration values may be **explicitly overridden in the source code**. Verify the actual runtime settings rather than relying solely on command-line arguments.
+>
+> Inconsistent architectures or pretrained weights may cause feature dimension mismatches or unexpected retrieval performance.
+
+</details>
+
+<details>
+<summary><b>🌦️ 3. Weather Augmentation</b></summary>
+
+<br>
+
+We use the `imgaug` library to synthesize different weather conditions.
+
+**Please pay particular attention to the versions of `imgaug` and its dependencies.** Different versions may introduce compatibility issues or variations in augmentation behavior, as reported by some researchers reproducing our results.
+
+We recommend referring to [`requirements.txt`](./requirements.txt) and performing the following checks:
+
+1. Visually inspect the generated weather images.
+2. Conduct an initial evaluation on **University-1652** using the released checkpoint.
+3. Examine both the weather images and retrieval results to identify potential configuration issues.
+
+**Weather augmentation configurations:**
+
+| File | Description |
+|:---|:---|
+| [`train.py`](./train.py) | Weather configurations defined in `iaa_weather_list` |
+| [`test_iaa_caption.py`](./test_iaa_caption.py) | Commented weather augmentation settings for evaluation |
+
+In `train.py`, lines 174–246 contain the standard image preprocessing and weather synthesis configurations, while lines 246–309 include additional weather settings explored in our generalization experiments.
+
+> [!TIP]
+> **Normal** uses the original images without weather augmentation. The remaining nine weather conditions should be generated using their respective augmentation configurations.
+>
+> For compound weather conditions, apply the augmenters in the order specified in the code rather than enabling all weather augmenters simultaneously.
+
+</details>
+
+<details>
+<summary><b>🛰️ 4. Evaluation Settings</b></summary>
+
+<br>
+
+In [`test_iaa_caption.py`](./test_iaa_caption.py), weather augmentation operations are **commented out by default**.
+
+To evaluate a specific weather condition, manually enable the corresponding augmentation configuration.
+
+| View | Weather Augmentation |
+|:---|:---|
+| 🚁 Drone View | Apply the corresponding weather perturbation |
+| 🛰️ Satellite View | Keep the original images without weather perturbations |
+
+Please ensure that consistent dataset splits, image preprocessing procedures, and feature extraction settings are used for both Drone-to-Satellite (D2S) and Satellite-to-Drone (S2D) retrieval.
+
+> [!IMPORTANT]
+> Weather perturbations are applied **only to drone-view images**, while satellite-view images remain unchanged.
+
+</details>
+
+<details>
+<summary><b>🧩 5. Checkpoint Compatibility</b></summary>
+
+<br>
+
+Please ensure that the model checkpoint, `opts.yaml`, dataset split, and evaluation settings correspond to the same experimental configuration.
+
+- **University-1652:** The publicly released `net_209.pth` corresponds to the University-1652 training configuration.
+- **SUES-200:** The experiments integrate data from four flight altitudes (150 / 200 / 250 / 300 m), followed by additional fine-tuning on SUES-200.
+
+Training procedures, weather synthesis settings, and evaluation protocols may differ across datasets. Carefully check configuration consistency when reproducing the reported results.
+
+</details>
+
+---
+
+### 💬 Questions & Support
+
+If you encounter difficulties during reproduction, please contact us through **GitHub Issues** or **email**.
+
+To help us identify and resolve issues efficiently, we encourage you to provide:
+
+- Computational environment and dependency versions
+- Model configuration and checkpoint information
+- Dataset preparation and weather augmentation settings
+- Experimental results, error logs, or relevant screenshots
+
+> [!NOTE]
+> 📮 **Response Time**
+>
+> As I am currently preparing for graduation and job applications, my availability may be somewhat limited. **Email is the preferred way to reach me, and I will do my best to respond within three days.** Thank you for your understanding if my response is delayed.
+>
+> I will continue updating this section as additional reproduction tips become available.
+
+**Thank you again for your interest in and support for WeatherPrompt!** ❤️
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## News
 * The **CoT Prompt** is released, Welcome to communicate！
 * The **Models** and **Weights** are released, Welcome to communicate！
