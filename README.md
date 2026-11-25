@@ -171,6 +171,7 @@ To help us identify and resolve issues efficiently, we encourage you to provide:
 * The **CoT Prompt** is released, Welcome to communicate！
 * The **Models** and **Weights** are released, Welcome to communicate！
 * We provide some of the tools in the **Weather.py**.
+* We have provided the source for the expanded version published in https://github.com/Jahawn-Wen/Weather4Geo.
 
 
 ## CoT Prompt
